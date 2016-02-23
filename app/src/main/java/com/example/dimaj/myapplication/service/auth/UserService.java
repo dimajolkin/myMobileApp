@@ -5,15 +5,13 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.example.dimaj.myapplication.activity.IndexActivity;
+import com.example.dimaj.myapplication.activity.app.IndexActivity;
 import com.example.dimaj.myapplication.activity.LoginActivity;
-import com.example.dimaj.myapplication.activity.RunActivity;
 import com.example.dimaj.myapplication.config.Config;
 import com.example.dimaj.myapplication.lib.Request;
 import com.example.dimaj.myapplication.lib.RequestCallback;
 import com.example.dimaj.myapplication.models.UserProfile;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 

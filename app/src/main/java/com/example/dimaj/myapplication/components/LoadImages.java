@@ -1,5 +1,6 @@
 package com.example.dimaj.myapplication.components;
 
+import android.app.Notification;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -11,8 +12,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class LoadImages extends AsyncTask<String, Void, Bitmap> {
-    protected ImageView iv;
+    protected ImageView iv = null;
     protected String imageUrl;
+
     public void setIv(ImageView iv) {
         this.iv = iv;
     }
@@ -21,15 +23,11 @@ public class LoadImages extends AsyncTask<String, Void, Bitmap> {
         this.imageUrl = url;
     }
 
-    @Override
-    protected Bitmap doInBackground(String... params) {
-        // TODO Auto-generated method stub
-
+    public Bitmap download() {
         try {
             URL url = new URL(imageUrl);
             InputStream is = url.openConnection().getInputStream();
-            Bitmap bitMap = BitmapFactory.decodeStream(is);
-            return bitMap;
+            return BitmapFactory.decodeStream(is);
 
         } catch (MalformedURLException e) {
             // TODO Auto-generated catch block
@@ -39,14 +37,22 @@ public class LoadImages extends AsyncTask<String, Void, Bitmap> {
             e.printStackTrace();
         }
         return null;
-
     }
+
+    @Override
+    protected Bitmap doInBackground(String... params) {
+        // TODO Auto-generated method stub
+        return download();
+    }
+
 
     @Override
     protected void onPostExecute(Bitmap result) {
         // TODO Auto-generated method stub
         super.onPostExecute(result);
-        iv.setImageBitmap(result);
+        if (iv != null) {
+            iv.setImageBitmap(result);
+        }
     }
 
 }

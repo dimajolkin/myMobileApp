@@ -53,6 +53,12 @@ public class UserProfile {
         this.avatar = avatar;
     }
 
+    public UserProfile(JSONObject json) {
+        setAttributes(json);
+    }
+    public UserProfile() {
+    }
+
     public void setAttributes(JSONObject data) {
         try {
             id = data.getInt("id");

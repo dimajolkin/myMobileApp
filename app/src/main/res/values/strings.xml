@@ -22,4 +22,5 @@
         completions."
     </string>
     <string name="title_activity_notification">Notification</string>
+    <string name="title_activity_notice">NoticeActivity</string>
 </resources>

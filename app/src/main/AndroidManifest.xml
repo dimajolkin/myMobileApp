@@ -34,14 +34,19 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".activity.IndexActivity"
+            android:name=".activity.app.IndexActivity"
             android:label="@string/title_activity_index"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.LoginActivity" />
         <activity
-            android:name=".activity.app.NotificationActivity"
-            android:label="@string/title_activity_notification"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:name=".activity.app.NoticeActivity"
+            android:label="@string/title_activity_notice"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <service
+            android:name=".service.auth.NoticeService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

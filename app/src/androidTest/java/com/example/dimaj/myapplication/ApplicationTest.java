@@ -2,22 +2,14 @@ package com.example.dimaj.myapplication;
 
 import android.app.Application;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.test.ApplicationTestCase;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.example.dimaj.myapplication.config.Config;
 import com.example.dimaj.myapplication.lib.ParseAnswerServer;
+import com.example.dimaj.myapplication.components.notice.OneNotice;
 import com.example.dimaj.myapplication.models.UserProfile;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
@@ -78,6 +70,42 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         Bitmap bmp = user.getBitmapAvatar();
 
         assertTrue(bmp != null);
+    }
+
+    public JSONObject createJSONNotice() {
+        JSONObject data = new JSONObject();
+        try {
+            data.put("type", "contact");
+            data.put("content", new JSONObject()
+                            .put("title", "Append friend")
+                            .put("icon", "icon")
+                            .put("hidden", 0)
+                            .put("owner", new JSONObject()
+                                    .put("id", 1)
+                                    .put("avatar", "avatar")
+                                    .put("name", "dima")
+                                    .put("url", "/user/1")
+                                    .put("sex", 0))
+                            .put("message", new JSONObject()
+                                    .put("text", "Hello World"))
+            );
+
+            return data;
+        } catch (JSONException ex) {
+            ex.printStackTrace();
+        }
+        return  null;
+    }
+
+    public void testParseOneNotice() {
+        JSONObject json  = createJSONNotice();
+        OneNotice notice = new OneNotice(json);
+
+
+        assertTrue(notice.getContent() != null);
+        assertTrue(notice.getContent().getMessage() != null);
+        assertEquals("Hello World", notice.getContent().getMessage().getText());
+
     }
 
 }

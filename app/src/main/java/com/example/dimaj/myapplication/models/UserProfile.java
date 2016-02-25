@@ -15,7 +15,15 @@ public class UserProfile {
     protected int id;
     protected String name;
     protected String avatar;
+    protected String background;
 
+    public String getBackground() {
+        return background;
+    }
+
+    public void setBackground(String background) {
+        this.background = background;
+    }
 
     public int getId() {
         return id;
@@ -38,6 +46,7 @@ public class UserProfile {
     }
 
     public Bitmap getBitmapAvatar() {
+
         try {
             URL url = new URL(avatar);
             InputStream is = url.openConnection().getInputStream();
@@ -64,7 +73,8 @@ public class UserProfile {
             id = data.getInt("id");
             name = data.getString("name");
             avatar = data.getString("avatar");
-
+            JSONObject jsonBackground = data.getJSONObject("background");
+            background = jsonBackground.getString("url");
 
         } catch (JSONException ex) {
             return;

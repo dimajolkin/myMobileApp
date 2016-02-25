@@ -1,10 +1,10 @@
 package com.example.dimaj.myapplication.activity.app;
 
-import android.content.Intent;
+import android.annotation.SuppressLint;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,39 +15,34 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.dimaj.myapplication.R;
+import com.example.dimaj.myapplication.activity.app.pages.NoticeFragment;
+import com.example.dimaj.myapplication.activity.app.pages.SettingFragment;
+import com.example.dimaj.myapplication.activity.app.pages.UserFragment;
 import com.example.dimaj.myapplication.components.LoadImages;
-import com.example.dimaj.myapplication.components.notice.OneNotice;
-import com.example.dimaj.myapplication.config.Config;
 import com.example.dimaj.myapplication.models.UserProfile;
-import com.example.dimaj.myapplication.service.auth.UserService;
-import com.example.dimaj.myapplication.service.auth.notice.NoticeService;
-
-import org.java_websocket.WebSocket;
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.framing.Framedata;
-import org.java_websocket.handshake.ServerHandshake;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
+import com.example.dimaj.myapplication.contentService.UserService;
+import com.example.dimaj.myapplication.contentService.notice.NoticeService;
 
 public class IndexActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+NoticeFragment.OnFragmentInteractionListener{
 
     protected String token;
     protected UserProfile profile;
     private UserService service = null;
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
 
-    protected ListView listNotices;
-    protected ArrayList<OneNotice> notices;
+    }
+
+
+
+    //    protected ListView listNotices;
+//    protected ArrayList<OneNotice> notices;
 
 
     public void setString(String token) {
@@ -59,8 +54,9 @@ public class IndexActivity extends AppCompatActivity
         super.onStart();
 
 //        name.setText(profile.getName());
-        listNotices = (ListView) findViewById(R.id.listNotices);
+//        listNotices = (ListView) findViewById(R.id.listNotices);
     }
+
 
 
     @Override
@@ -72,6 +68,9 @@ public class IndexActivity extends AppCompatActivity
         noticeService.initWebSocket();
 
         profile = service.getProfile();
+
+        //set default page
+        setPage(R.id.nav_wall);
 
         //addd new element for listNotice
         // находим список
@@ -107,6 +106,8 @@ public class IndexActivity extends AppCompatActivity
         loadImage.setIv((ImageView) header.findViewById(R.id.avatar));
         loadImage.execute();
 
+
+
         navigationView.setNavigationItemSelectedListener(this);
 
     }
@@ -139,6 +140,7 @@ public class IndexActivity extends AppCompatActivity
         int id = item.getItemId();
 
 
+        setPage(id);
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
@@ -153,11 +155,11 @@ public class IndexActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        setPage(id);
         if (id == R.id.nav_notice) {
-
-
+            //todo
         } else if (id == R.id.nav_wall) {
-//            setContentView(R.layout.content_index);
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -165,5 +167,25 @@ public class IndexActivity extends AppCompatActivity
         return true;
     }
 
+
+    public void setPage(int id) {
+        @SuppressLint("CommitTransaction")
+        android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        if (id == R.id.nav_notice) {
+            NoticeFragment fragment = new NoticeFragment();
+            setTitle("Уведомления");
+            ft.replace(R.id.content, fragment).commit();
+
+        } else if (id == R.id.nav_wall) {
+            UserFragment fragment = new UserFragment(service);
+            setTitle("Стена");
+            ft.replace(R.id.content, fragment).commit();
+        } else if (id == R.id.action_settings) {
+            SettingFragment fragment = new SettingFragment();
+            ft.replace(R.id.content, fragment).commit();
+            setTitle("Настройки");
+        }
+
+    }
 
 }

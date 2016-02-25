@@ -1,4 +1,4 @@
-package com.example.dimaj.myapplication.service.auth.notice;
+package com.example.dimaj.myapplication.contentService.notice;
 
 import android.annotation.TargetApi;
 import android.app.Notification;
@@ -12,10 +12,9 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.util.Log;
-import android.widget.ImageView;
 
 import com.example.dimaj.myapplication.R;
-import com.example.dimaj.myapplication.activity.app.NoticeActivity;
+import com.example.dimaj.myapplication.activity.app.IndexActivity;
 import com.example.dimaj.myapplication.components.LoadImages;
 import com.example.dimaj.myapplication.components.notice.OneNotice;
 import com.example.dimaj.myapplication.components.notice.OneNoticeContent;
@@ -23,9 +22,7 @@ import com.example.dimaj.myapplication.components.notice.OneNoticeMessage;
 import com.example.dimaj.myapplication.config.Config;
 import com.example.dimaj.myapplication.models.UserProfile;
 
-import org.java_websocket.WebSocket;
 import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.framing.Framedata;
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,8 +32,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
@@ -165,7 +160,7 @@ public class NoticeService {
         @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
         @Override
         protected Void doInBackground(Void... params) {
-            Intent intent = new Intent(activity, NoticeActivity.class);
+            Intent intent = new Intent(activity, IndexActivity.class);
             PendingIntent pIntent = PendingIntent.getActivity(activity, 0, intent, 0);
 
             String text = "Текст не найден",

@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.ImageView;
 
 import java.io.IOException;
@@ -25,6 +26,7 @@ public class LoadImages extends AsyncTask<String, Void, Bitmap> {
 
     public Bitmap download() {
         try {
+            Log.d("Download image", imageUrl);
             URL url = new URL(imageUrl);
             InputStream is = url.openConnection().getInputStream();
             return BitmapFactory.decodeStream(is);
@@ -53,6 +55,8 @@ public class LoadImages extends AsyncTask<String, Void, Bitmap> {
         if (iv != null) {
             iv.setImageBitmap(result);
         }
+
+
     }
 
 }

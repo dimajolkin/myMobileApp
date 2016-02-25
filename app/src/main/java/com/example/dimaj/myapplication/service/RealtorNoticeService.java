@@ -1,11 +1,11 @@
-package com.example.dimaj.myapplication.service.auth;
+package com.example.dimaj.myapplication.service;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-public class NoticeService extends Service {
-    public NoticeService() {
+public class RealtorNoticeService extends Service {
+    public RealtorNoticeService() {
     }
 
     @Override

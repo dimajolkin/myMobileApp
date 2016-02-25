@@ -1,4 +1,4 @@
-package com.example.dimaj.myapplication.service.auth;
+package com.example.dimaj.myapplication.contentService;
 
 import android.os.AsyncTask;
 

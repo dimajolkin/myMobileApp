@@ -10,4 +10,18 @@
         android:layout_height="match_parent"
         android:text="@string/hello_blank_fragment" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="119dp"
+        android:text="Stop"
+        android:id="@+id/btn_stop"
+        android:layout_gravity="center_horizontal|top" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="122dp"
+        android:text="Start"
+        android:id="@+id/btn_start"
+        android:layout_gravity="left|top" />
+
 </FrameLayout>

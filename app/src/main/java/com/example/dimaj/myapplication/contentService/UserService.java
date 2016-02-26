@@ -1,5 +1,6 @@
 package com.example.dimaj.myapplication.contentService;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
@@ -17,7 +18,7 @@ import org.json.JSONObject;
 
 public class UserService {
     public String TAG = "RunActivity.TEST";
-    protected AppCompatActivity activity;
+    protected Context context;
     protected static SharedPreferences storage;
     protected String phpSessid;
     protected static Request request = null;
@@ -27,9 +28,9 @@ public class UserService {
         return phpSessid;
     }
 
-    public UserService(AppCompatActivity activity) {
-        this.activity = activity;
-        storage = activity.getSharedPreferences("PHPSESSID", 0);
+    public UserService(Context context) {
+        this.context = context;
+        storage = context.getSharedPreferences("PHPSESSID", 0);
         phpSessid = storage.getString("PHPSESSID", "");
 
         if (profile == null) {
@@ -61,18 +62,18 @@ public class UserService {
                     JSONObject json = new JSONObject(request.getHtml());
                     if (json.getBoolean("isAuth")) {
                         Log.d(TAG, "пользователь авторизован");
-                        if (!activity.getLocalClassName().equals(IndexActivity.class)) {
-                            Log.d(TAG, json.toString());
-                            JSONObject profileProperty = json.getJSONObject("profile");
-                            profile.setAttributes(profileProperty);
+//                        if (!context.getLocalClassName().equals(IndexActivity.class)) {
+                        Log.d(TAG, json.toString());
+                        JSONObject profileProperty = json.getJSONObject("profile");
+                        profile.setAttributes(profileProperty);
 
-                            Intent intent = new Intent(activity, IndexActivity.class);
-                            activity.startActivity(intent);
+                        Intent intent = new Intent(context, IndexActivity.class);
+                        context.startActivity(intent);
 
-                        }
+//                        }
                     } else {
                         Log.d(TAG, "пользователь не авторизован");
-                        activity.startActivity(new Intent(activity, LoginActivity.class));
+                        context.startActivity(new Intent(context, LoginActivity.class));
                     }
                 } catch (JSONException ex) {
                     Log.d(TAG, ex.getMessage());

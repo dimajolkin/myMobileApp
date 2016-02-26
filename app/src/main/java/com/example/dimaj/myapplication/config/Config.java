@@ -7,6 +7,6 @@ public class Config {
     public static final String URL_AUTH = "http://realtor.im/mlogin/login";
     public static final String URL_INFO = "http://realtor.im/mlogin/info";
 
-    public static final String WEB_SOCKET = "ws://192.168.0.20:8047/notify";
+    public static final String WEB_SOCKET = "ws://realtor.im:8047/notify";
     public static  String PHPSESSID = "";
 }

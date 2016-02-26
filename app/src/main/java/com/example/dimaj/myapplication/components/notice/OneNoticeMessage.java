@@ -4,7 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class OneNoticeMessage {
-    protected String text;
+    protected String text = "";
 
     public OneNoticeMessage(JSONObject json) {
         try {

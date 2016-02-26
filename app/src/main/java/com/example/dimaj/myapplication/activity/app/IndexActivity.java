@@ -64,8 +64,8 @@ NoticeFragment.OnFragmentInteractionListener{
         super.onCreate(savedInstanceState);
         service = new UserService(this);
 
-        NoticeService noticeService = new NoticeService(this, service.getSession());
-        noticeService.initWebSocket();
+//        NoticeService noticeService = new NoticeService(this, service.getSession());
+//        noticeService.initWebSocket();
 
         profile = service.getProfile();
 
@@ -181,7 +181,7 @@ NoticeFragment.OnFragmentInteractionListener{
             setTitle("Стена");
             ft.replace(R.id.content, fragment).commit();
         } else if (id == R.id.action_settings) {
-            SettingFragment fragment = new SettingFragment();
+            SettingFragment fragment = new SettingFragment(service);
             ft.replace(R.id.content, fragment).commit();
             setTitle("Настройки");
         }

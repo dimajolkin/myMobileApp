@@ -4,6 +4,8 @@ import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -30,6 +32,7 @@ import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.AccessController;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -39,23 +42,60 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 public class NoticeService {
 
     protected AppCompatActivity activity;
+    protected Service service;
     protected NotificationCompat.Builder mBuilder;
     protected static int number = 0;
     protected String session = "";
     protected boolean statusConnect = false;
     protected WebSocketClient mWebSocketClient;
+    protected Timer timer;
+
     protected NoticeServiceFactotySystemNotice systemNotice;
 
+    protected NotificationManager notificationManager;
 
-    public NoticeService(AppCompatActivity activity, String session) {
-        this.activity = activity;
-        this.session = session;
+    protected Thread thread;
+
+    public Thread getThread() {
+        return thread;
+    }
+
+    public void stop() {
+        thread = null;
+        mWebSocketClient.close();
+        timer.cancel();
+
+    }
+
+    public NotificationManager getNotificationManager() {
+        return notificationManager;
+    }
+
+    public void setNotificationManager(NotificationManager notificationManager) {
+        this.notificationManager = notificationManager;
+    }
+
+    public NoticeService(Service service) {
+        this.service = service;
         systemNotice = new NoticeServiceFactotySystemNotice();
-        mBuilder = new NotificationCompat.Builder(activity);
+
     }
 
 
+    public void setSession(String session) {
+        this.session = session;
+    }
+
+    public String getSession() {
+        return this.session;
+    }
     public void initWebSocket() {
+
+        if (statusConnect) {
+            return;
+        }
+        systemNotice = new NoticeServiceFactotySystemNotice();
+
         URI url = null;
         JSONObject connect = new JSONObject();
         try {
@@ -73,6 +113,8 @@ public class NoticeService {
 
         final String connectString = connect.toString();
 
+        timer = new Timer();
+
         mWebSocketClient = new WebSocketClient(url) {
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
@@ -85,10 +127,12 @@ public class NoticeService {
             @Override
             public void onMessage(String s) {
                 final String message = s;
-                activity.runOnUiThread(new Runnable() {
+
+                thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
+                            Log.d("Websocker", "new " + message);
                             JSONArray list = new JSONArray(message);
                             for (int i = 0; i < list.length(); i++) {
                                 JSONObject obj = list.getJSONObject(i);
@@ -115,6 +159,9 @@ public class NoticeService {
                         Log.d("Websocker", message);
                     }
                 });
+
+                thread.run();
+
             }
 
             @Override
@@ -129,25 +176,58 @@ public class NoticeService {
                 Log.d("Websocket", "Error " + e.getMessage());
             }
         };
+
         mWebSocketClient.connect();
 
-        Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                Log.d("TEST", systemNotice.life());
-                mWebSocketClient.send(systemNotice.life());
+                if (mWebSocketClient != null) {
+                    Log.d("TEST", systemNotice.life());
+                    mWebSocketClient.send(systemNotice.life());
+
+                }
             }
         }, 5000, 10000);
+
 
     }
 
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void send(final OneNotice notice) {
-        NoticeServiceThread thread = new NoticeServiceThread();
-        thread.setNotice(notice);
-        thread.execute();
+//        String text = "Текст не найден",
+//                title = "Заголовок не найден";
+//
+//        OneNoticeContent content = notice.getContent();
+//        OneNoticeMessage msg = notice.getContent().getMessage();
+//        UserProfile owner = content.getOwner();
+//        text = msg.getText();
+//        title = content.getTitle();
+//        //clear html
+//        text = Html.fromHtml(text).toString();
+//
+//        LoadImages loadImage = new LoadImages();
+//        loadImage.setUrl(owner.getAvatar());
+//        Bitmap icon = loadImage.download();
+
+
+//        NotificationManager notificationmanager = (NotificationManager)service.getSystemService(Context.NOTIFICATION_SERVICE);
+        Intent notificationIntent = new Intent(service, IndexActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(service, 0, notificationIntent, 0);
+
+            long when=System.currentTimeMillis();
+            Notification.Builder builder = new Notification.Builder(service);
+            builder.setContentIntent(pendingIntent);
+            builder.setAutoCancel(true);
+            builder.setSmallIcon(R.drawable.ic_menu_camera);
+            builder.setWhen(when);
+            builder.setTicker("Notification");
+            builder.setContentTitle("Title");
+            builder.setContentText("Content");
+
+            Notification notification = builder.build();
+            notificationManager.notify(32, notification);
     }
 
     class NoticeServiceThread extends AsyncTask<Void, Void, Void> {
@@ -160,8 +240,9 @@ public class NoticeService {
         @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
         @Override
         protected Void doInBackground(Void... params) {
-            Intent intent = new Intent(activity, IndexActivity.class);
-            PendingIntent pIntent = PendingIntent.getActivity(activity, 0, intent, 0);
+//            NotificationManager notificationmanager = (NotificationManager)service.getSystemService(Context.NOTIFICATION_SERVICE);
+            Intent notificationIntent = new Intent(service, IndexActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(service, 0, notificationIntent, 0);
 
             String text = "Текст не найден",
                     title = "Заголовок не найден";
@@ -180,22 +261,22 @@ public class NoticeService {
             loadImage.setUrl(owner.getAvatar());
             Bitmap icon = loadImage.download();
 
-            Notification n = new Notification.Builder(activity)
+            Notification n = new Notification.Builder(service)
                     .setContentTitle(title)
                     .setContentText(text)
                     .setSmallIcon(R.drawable.ic_menu_send)
-                    .setContentIntent(pIntent)
+                    .setContentIntent(pendingIntent)
                     .setAutoCancel(true)
-                    .setLargeIcon(icon)
-                    .build();
+                    .setLargeIcon(icon).build();
+//
+            if (notificationManager != null) {
+                notificationManager.notify(number++, n);
+            }
+
 //                .addAction(R.drawable.ic_menu_camera, "Call", pIntent)
 //                .addAction(R.drawable.ic_menu_camera, "More", pIntent)
 //                .addAction(R.drawable.ic_menu_camera, "And more", pIntent).build();
 
-            NotificationManager notificationManager =
-                    (NotificationManager) activity.getSystemService(NOTIFICATION_SERVICE);
-
-            notificationManager.notify(number++, n);
 
             return null;
         }
@@ -217,6 +298,6 @@ class NoticeServiceFactotySystemNotice {
             }
         }
 
-        return  life;
+        return life;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.dimaj.myapplication.activity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dimaj.myapplication.R;
+import com.example.dimaj.myapplication.activity.app.IndexActivity;
 import com.example.dimaj.myapplication.lib.BaseActivity;
 import com.example.dimaj.myapplication.lib.Request;
 import com.example.dimaj.myapplication.lib.RequestCallback;
@@ -57,7 +59,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     SharedPreferences.Editor ed = storage.edit();
                     ed.putString("PHPSESSID", request.getSession());
                     ed.apply();
-//                    startActivity(new Intent(LoginActivity.this, IndexActivity.class));
+                    startActivity(new Intent(LoginActivity.this, IndexActivity.class));
                 } else {
                     //error
                     Log.d(TAG, request.getMessage());

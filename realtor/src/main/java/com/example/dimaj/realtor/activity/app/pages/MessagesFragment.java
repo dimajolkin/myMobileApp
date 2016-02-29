@@ -30,7 +30,7 @@ public class MessagesFragment extends Fragment {
     }
 
     public void init(View v) {
-        
+        //@todo
     }
 
 }

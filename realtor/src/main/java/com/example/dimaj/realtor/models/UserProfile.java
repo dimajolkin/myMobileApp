@@ -108,6 +108,8 @@ public class UserProfile {
             ex.printStackTrace();
             return;
         }
+        //add current user in storage
+        users.add(this);
     }
 
     public void setOnAfterInitAvatar(Runnable onAfterInitAvatar) {

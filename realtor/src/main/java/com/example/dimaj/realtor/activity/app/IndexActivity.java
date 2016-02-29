@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.dimaj.realtor.R;
+import com.example.dimaj.realtor.activity.app.pages.MessagesFragment;
 import com.example.dimaj.realtor.activity.app.pages.NoticeFragment;
 import com.example.dimaj.realtor.activity.app.pages.SettingFragment;
 import com.example.dimaj.realtor.activity.app.pages.UserFragment;
@@ -40,13 +41,13 @@ public class IndexActivity extends AppCompatActivity
     public void onFragmentInteraction(Uri uri) {
 
     }
+
     @Override
-    public void onNewIntent(Intent intent){
+    public void onNewIntent(Intent intent) {
         Bundle extras = intent.getExtras();
         Log.d("newIntent", "run");
-        if(extras != null){
-            if(extras.containsKey("page"))
-            {
+        if (extras != null) {
+            if (extras.containsKey("page")) {
                 int page = extras.getInt("page", R.id.nav_wall);
                 setPage(page);
             } else {
@@ -86,14 +87,14 @@ public class IndexActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -188,6 +189,12 @@ public class IndexActivity extends AppCompatActivity
             UserFragment fragment = new UserFragment(service);
             setTitle("Стена");
             ft.replace(R.id.content, fragment).commit();
+
+        } else if (id == R.id.nav_message) {
+            MessagesFragment fragment = new MessagesFragment(service);
+            setTitle("Сообщения");
+            ft.replace(R.id.content, fragment).commit();
+
         } else if (id == R.id.action_settings) {
             SettingFragment fragment = new SettingFragment(service);
             ft.replace(R.id.content, fragment).commit();

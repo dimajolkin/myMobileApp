@@ -5,9 +5,59 @@
     tools:context="com.example.dimaj.realtor.activity.app.pages.MessagesFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:gravity="bottom"
+        android:weightSum="1"
+        android:transitionGroup="false"
+        android:scrollIndicators="bottom|right">
+
+        <ListView
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/listMessage"
+            android:background="#666"
+            android:choiceMode="multipleChoice"
+            android:headerDividersEnabled="false"
+            android:layout_weight="0.97"
+            android:layout_gravity="bottom" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="140px"
+            android:gravity="bottom|right"
+            android:weightSum="1"
+            android:layout_gravity="bottom"
+            android:paddingTop="20px"
+            android:baselineAligned="false"
+            android:contextClickable="false"
+            android:touchscreenBlocksFocus="false"
+            android:transitionGroup="false">
+
+            <EditText
+                android:layout_width="253dp"
+                android:layout_height="53dp"
+                android:id="@+id/test_message"
+                android:gravity="left|right"
+                android:layout_gravity="bottom|right"
+                android:text="text"
+                android:layout_weight="0.65"
+                android:textSize="@dimen/abc_dialog_padding_material" />
+
+            <ImageButton
+                android:layout_width="200px"
+                android:layout_height="match_parent"
+                android:id="@+id/sendMsg"
+                android:layout_gravity="bottom|right"
+                android:src="@android:drawable/ic_menu_send"
+                android:scaleType="centerCrop" />
+
+        </LinearLayout>
+    </LinearLayout>
 
 </FrameLayout>

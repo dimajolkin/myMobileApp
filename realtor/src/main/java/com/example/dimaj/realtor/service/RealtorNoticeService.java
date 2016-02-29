@@ -13,6 +13,8 @@ import com.example.dimaj.realtor.contentService.notice.NoticeFactory;
 public class RealtorNoticeService extends Service {
     public static NoticeFactory service;
 
+
+
     public RealtorNoticeService() {
     }
 
@@ -47,7 +49,14 @@ public class RealtorNoticeService extends Service {
             public void run() {
                 if (!auth.getSession().isEmpty()) {
                     service.setSession(auth.getSession());
+                    service.setOnStop(new Runnable() {
+                        @Override
+                        public void run() {
+                            //@todo stop
+                        }
+                    });
                     service.initWebSocket();
+
                     return;
                 }
                 RealtorNoticeService.this.stopSelf();

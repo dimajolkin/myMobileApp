@@ -6,22 +6,16 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
 import android.util.Log;
 
 import com.example.dimaj.realtor.R;
 import com.example.dimaj.realtor.activity.app.IndexActivity;
 import com.example.dimaj.realtor.components.LoadImages;
 import com.example.dimaj.realtor.components.notice.OneNotice;
-import com.example.dimaj.realtor.components.notice.OneNoticeContent;
-import com.example.dimaj.realtor.components.notice.OneNoticeMessage;
 import com.example.dimaj.realtor.config.Config;
-import com.example.dimaj.realtor.lib.ImageHelper;
-import com.example.dimaj.realtor.models.UserProfile;
 import com.example.dimaj.realtor.models.notice.OneNoticeBuilderFactory;
 
 import org.java_websocket.client.WebSocketClient;
@@ -40,11 +34,11 @@ public class NoticeFactory {
 
     protected AppCompatActivity activity;
     protected Service service;
-    protected NotificationCompat.Builder mBuilder;
     protected static int number = 0;
     protected String session = "";
     protected boolean statusConnect = false;
     protected WebSocketClient mWebSocketClient;
+    protected Runnable onStop;
     protected Timer timer;
 
     protected NoticeServiceFactotySystemNotice systemNotice;
@@ -53,23 +47,20 @@ public class NoticeFactory {
 
     protected Thread thread;
 
-    public Thread getThread() {
-        return thread;
-    }
 
     public void stop() {
         thread = null;
         mWebSocketClient.close();
         timer.cancel();
-
     }
 
-    public NotificationManager getNotificationManager() {
-        return notificationManager;
-    }
 
     public void setNotificationManager(NotificationManager notificationManager) {
         this.notificationManager = notificationManager;
+    }
+
+    public void setOnStop(Runnable onStop) {
+        this.onStop = onStop;
     }
 
     public NoticeFactory(Service service) {
@@ -114,13 +105,14 @@ public class NoticeFactory {
         timer = new Timer();
 
         mWebSocketClient = new WebSocketClient(url) {
+            int countError = 0;
+
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
                 Log.i("Websocket", "Opened");
                 Log.d("Websocket", connectString);
                 mWebSocketClient.send(connectString);
             }
-
 
             @Override
             public void onMessage(String s) {
@@ -136,8 +128,16 @@ public class NoticeFactory {
                                 JSONObject obj = list.getJSONObject(i);
                                 String status = obj.getString("type");
                                 if (status.equals("error")) {
+                                    if (countError > 10) {
+                                        NoticeFactory.this.stop();
+
+                                        if (NoticeFactory.this.onStop != null) {
+                                            NoticeFactory.this.onStop.run();
+                                        }
+                                    }
                                     Log.d("Websocker", "reconnect => " + message);
                                     statusConnect = false;
+                                    countError++;
                                     mWebSocketClient.send(connectString);
                                     continue;
                                 }
@@ -172,6 +172,9 @@ public class NoticeFactory {
             public void onError(Exception e) {
                 statusConnect = false;
                 Log.d("Websocket", "Error " + e.getMessage());
+                if (NoticeFactory.this.onStop != null) {
+                    NoticeFactory.this.onStop.run();
+                }
             }
         };
 
@@ -181,7 +184,7 @@ public class NoticeFactory {
             @Override
             public void run() {
                 if (mWebSocketClient != null) {
-                    Log.d("TEST", systemNotice.life());
+                    Log.d("Websocker", systemNotice.life());
                     mWebSocketClient.send(systemNotice.life());
 
                 }
@@ -210,7 +213,7 @@ public class NoticeFactory {
                 notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 PendingIntent pendingIntent = PendingIntent.getActivity(service, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                Notification.Builder builder =  new OneNoticeBuilderFactory(notice, service).result();
+                Notification.Builder builder = new OneNoticeBuilderFactory(notice, service).result();
                 builder.setContentIntent(pendingIntent);
 
                 Notification notification = builder.build();

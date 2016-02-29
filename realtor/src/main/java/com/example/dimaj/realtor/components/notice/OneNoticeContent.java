@@ -5,6 +5,8 @@ import com.example.dimaj.realtor.models.UserProfile;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.regex.Pattern;
+
 public class OneNoticeContent {
     protected String title;
     protected String icon;
@@ -19,21 +21,25 @@ public class OneNoticeContent {
                 title = json.getString("title");
             if (json.has("icon"))
                 icon = json.getString("icon");
-//@todo - fix server type int|boolean
-//            if (json.has("hidden")) {
-//                String h = json.getString(json.getString("hidden"));
-//            }
-//                hidden = json.getBoolean("hidden");
+
+            try {
+                hidden = json.getBoolean("hidden");
+            } catch (JSONException ex) {
+                hidden = false;
+            }
 
             JSONObject dataOwner = json.getJSONObject("owner");
-            owner = new UserProfile(dataOwner);
+            owner = UserProfile.find(dataOwner.getInt("id"));
+            if (owner == null) {
+                owner = new UserProfile(dataOwner);
+                UserProfile.add(owner);
+            }
+
             message = new OneNoticeMessage(json.getJSONObject("message"));
         } catch (JSONException ex) {
             ex.printStackTrace();
             return;
         }
-
-
     }
 
     public String getTitle() {

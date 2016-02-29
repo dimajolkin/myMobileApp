@@ -8,7 +8,25 @@ import com.example.dimaj.realtor.components.LoadImages;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class UserProfile {
+
+    protected static ArrayList<UserProfile> users = new ArrayList<UserProfile>();
+
+    public static UserProfile find(int id) {
+        for (UserProfile user : users) {
+            if (user.getId() == id) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    public static void add(UserProfile user) {
+        users.add(user);
+    }
+
     protected int id;
     protected String name;
     protected String avatarUrl;
@@ -57,9 +75,9 @@ public class UserProfile {
     public void setAttributes(JSONObject data) {
         try {
             id = data.getInt("id");
+
             name = data.getString("name");
             avatarUrl = data.getString("avatar");
-
 
 
             final LoadImages load = new LoadImages();

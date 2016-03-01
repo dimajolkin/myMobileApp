@@ -15,5 +15,4 @@ public class Messages {
     public void setOwner(UserProfile owner) {
         this.owner = owner;
     }
-    
 }
